@@ -10,14 +10,15 @@ function App() {
     if (playerColor === "black") {
       makeRandomMove();
     }
-  }, [playerColor, game]); // Run the effect whenever playerColor or game changes
+  }, [playerColor, game]);
 
   function makeAMove(move) {
     const gameCopy = new Chess(game.fen());
     const result = gameCopy.move(move);
     if (result !== null) {
       setGame(gameCopy);
-      setPlayerColor(playerColor === "white" ? "black" : "white"); // Switch player turn
+      setPlayerColor(playerColor === "white" ? "black" : "white");
+      checkGameState(gameCopy); // Check game state after each move
     }
     return result;
   }
@@ -31,11 +32,22 @@ function App() {
     makeAMove(possibleMoves[randomIndex]);
   }
 
+  function checkGameState(currentGame) {
+    if (currentGame.isDraw()) {
+      alert("Draw");
+    } else if (currentGame.isCheckmate()) {
+      alert("Checkmate");
+    }
+    else if (currentGame.isStalemate()) {
+      alert("stalemate");
+    }
+  }
+
   function onDrop(sourceSquare, targetSquare) {
     const move = makeAMove({
       from: sourceSquare,
       to: targetSquare,
-      promotion: "q", // Always promote to a queen
+      promotion: "q",
     });
 
     if (move === null) {
